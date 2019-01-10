@@ -140,22 +140,24 @@ public class Gameplay extends AppCompatActivity {
         // This is from https://stackoverflow.com/questions/4754985/android-split-drawable
 
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        Bitmap bMapScaled = Bitmap.createScaledBitmap(bitmap, 240, 240, true);
+        int height_inc = bitmap.getHeight() / 3;
+        int width_inc = bitmap.getWidth() / 3;
 
-        bitmapsArray[0] = Bitmap.createBitmap(bMapScaled, 0, 0, 80, 80);
-        bitmapsArray[1] = Bitmap.createBitmap(bMapScaled, 80, 0, 80, 80);
-        bitmapsArray[2] = Bitmap.createBitmap(bMapScaled, 160, 0, 80, 80);
-        bitmapsArray[3] = Bitmap.createBitmap(bMapScaled, 0, 80, 80, 80);
-        bitmapsArray[4] = Bitmap.createBitmap(bMapScaled, 80, 80, 80, 80);
-        bitmapsArray[5] = Bitmap.createBitmap(bMapScaled, 160, 80, 80, 80);
-        bitmapsArray[6] = Bitmap.createBitmap(bMapScaled, 0, 160, 80, 80);
-        bitmapsArray[7] = Bitmap.createBitmap(bMapScaled, 80, 160, 80, 80);
-        bitmapsArray[8] = Bitmap.createBitmap(bMapScaled, 160, 160, 80, 80);
+        bitmapsArray[0] = Bitmap.createBitmap(bitmap, 0, 0, width_inc, height_inc);
+        bitmapsArray[1] = Bitmap.createBitmap(bitmap, width_inc, 0, width_inc, height_inc);
+        bitmapsArray[2] = Bitmap.createBitmap(bitmap, 2*width_inc, 0, width_inc, height_inc);
+        bitmapsArray[3] = Bitmap.createBitmap(bitmap, 0, height_inc, width_inc, height_inc);
+        bitmapsArray[4] = Bitmap.createBitmap(bitmap, width_inc, height_inc, width_inc, height_inc);
+        bitmapsArray[5] = Bitmap.createBitmap(bitmap, 2*width_inc, height_inc, width_inc, height_inc);
+        bitmapsArray[6] = Bitmap.createBitmap(bitmap, 0, 2*height_inc, width_inc, height_inc);
+        bitmapsArray[7] = Bitmap.createBitmap(bitmap, width_inc, 2*height_inc, width_inc, height_inc);
+        bitmapsArray[8] = Bitmap.createBitmap(bitmap, 2*width_inc, 2*height_inc, width_inc, height_inc);
 
 
         grid.setAdapter(new
                 GridAdapter(this, bitmapsArray)
         );
+        grid.setNumColumns(3);
 
 
         //imageView.setImageBitmap(bitmapsArray[4]);

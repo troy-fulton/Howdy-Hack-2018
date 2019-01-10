@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Howdy Hack Local</string>
     <string name="title_activity_gameplay">Gameplay</string>
+    <string name="back_to_main_menu">Back to Main Menu</string>
 </resources>
