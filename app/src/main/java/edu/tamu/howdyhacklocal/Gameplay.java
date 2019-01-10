@@ -157,6 +157,7 @@ public class Gameplay extends AppCompatActivity {
                 GridAdapter(this, bitmapsArray)
         );
 
+
         //imageView.setImageBitmap(bitmapsArray[4]);
     }
 
