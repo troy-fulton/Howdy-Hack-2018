@@ -14,6 +14,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.GridView;
@@ -21,7 +22,10 @@ import android.widget.ImageView;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Random;
 
 import static java.lang.Integer.parseInt;
 
@@ -32,8 +36,8 @@ public class Gameplay extends AppCompatActivity {
     Button backButton;
     String mCurrentPhotoPath;
     GridView grid;
-    private Integer num_squares, dimension;
-    Bitmap[] bitmapsArray;
+    private Integer num_squares, dimension, blankSpot;
+    Bitmap[] bitmapArray, solution;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +46,21 @@ public class Gameplay extends AppCompatActivity {
 
         setup();
         takePhoto();
-
-        // instantiate the Grid of pictures and populate it
-        populateGrid();
     }
 
     private void setup() {
-        grid = (GridView) findViewById(R.id.gridView);
         //imageView = (ImageView) findViewById(R.id.imageView);
+
+        // Get the grid and button:
+        grid = (GridView) findViewById(R.id.gridView);
         backButton = (Button) findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+        backButton.setVisibility(View.GONE);
 
         // Get the message for how many squares to produce
         Bundle bundle = getIntent().getExtras();
@@ -59,18 +69,47 @@ public class Gameplay extends AppCompatActivity {
             dimension = (int) Math.sqrt(num_squares+1);
         }
 
-        bitmapsArray = new Bitmap[num_squares + 1];
-        imageViewsArray = new ImageView[num_squares];
-        for (int i = 0; i < num_squares; i++) {
-            imageViewsArray[i] = new ImageView(this);
-        }
+        bitmapArray = new Bitmap[num_squares + 1];
+        solution = new Bitmap[num_squares + 1];
 
-        backButton.setOnClickListener(new View.OnClickListener() {
+        grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View view) {
-                finish();
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                swap(i);
             }
         });
+    }
+
+    // Our new methods:
+    public void swap(int i) {
+        // Test for valid moves:
+        Boolean isValid = true;
+        isValid = i == (blankSpot - dimension);
+        isValid |= i == (blankSpot + dimension);
+        isValid |= i == (blankSpot - 1) && (blankSpot % dimension) != 0;
+        isValid |= i == (blankSpot + 1) && (blankSpot % dimension) != (dimension - 1);
+        if (!isValid) return;
+
+        // Swap the pictures and reset the adapter:
+        Bitmap temp = bitmapArray[i];
+        bitmapArray[i] = bitmapArray[blankSpot];
+        bitmapArray[blankSpot] = temp;
+        blankSpot = i;
+        grid.setAdapter(new
+                GridAdapter(this, bitmapArray)
+        );
+
+        // Show the exit button when it is solved
+        Boolean isSolved = true;
+        for (int j = 0; j < bitmapArray.length; j++) {
+            if (solution[j] != bitmapArray[j]) {
+                isSolved = false;
+                break;
+            }
+        }
+        if (isSolved) {
+            backButton.setVisibility(View.VISIBLE);
+        }
     }
 
     /*
@@ -136,43 +175,51 @@ public class Gameplay extends AppCompatActivity {
         bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = scaleFactor;
 
-        // This is from https://stackoverflow.com/questions/4754985/android-split-drawable
-
+        // Get the amount to increment for each picture
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
         int height_inc = bitmap.getHeight() / dimension;
         int width_inc = bitmap.getWidth() / dimension;
 
-        int blankIndex = 4;
+        // Randomly pick the blank spot
+        blankSpot = new Random().nextInt(num_squares + 2);
 
-
+        // Create the pieces of the bitmap
         int bmpCount = 0;
-
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
-                if (bmpCount == blankIndex)
-                    bitmapsArray[bmpCount] = Bitmap.createBitmap(width_inc, height_inc, Bitmap.Config.ARGB_8888);
+                // For each picture, use these bounds to cut the pictures
+                // This is from https://stackoverflow.com/questions/4754985/android-split-drawable
+                if (bmpCount == blankSpot)
+                    bitmapArray[bmpCount] = Bitmap.createBitmap(width_inc, height_inc, Bitmap.Config.ARGB_8888);
                 else
-                    bitmapsArray[bmpCount] = Bitmap.createBitmap(bitmap,
+                    bitmapArray[bmpCount] = Bitmap.createBitmap(bitmap,
                         j*width_inc, i*height_inc, width_inc, height_inc);
                 bmpCount++;
             }
         }
 
+        // Copy the solution before shuffling
+        for (int i = 0; i < bitmapArray.length; i++) {
+            solution[i] = bitmapArray[i];
+        }
+
+        // Shuffle
+        Collections.shuffle(Arrays.asList(bitmapArray));
+
+        // Find the blank tile in the new shuffled mess
+        for (int i = 0; i < bitmapArray.length; i++) {
+            if (bitmapArray[i] == solution[blankSpot]) {
+                blankSpot = i;
+                break;
+            }
+        }
+
+        // Set the scrambled order as the new adapter
         grid.setAdapter(new
-                GridAdapter(this, bitmapsArray)
+                GridAdapter(this, bitmapArray)
         );
         grid.setNumColumns(dimension);
 
-
-        //imageView.setImageBitmap(bitmapsArray[4]);
-    }
-
-    /*
-        Methods for chopping up the picture and populating the grid
-     */
-    private void populateGrid() {
-        for (int i=0; i < 9; i++) {
-            //grid.addView(imageViewsArray[i]);
-        }
+        //imageView.setImageBitmap(bitmapArray[4]);
     }
 }

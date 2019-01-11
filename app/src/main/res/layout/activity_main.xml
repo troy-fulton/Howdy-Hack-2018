@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="16dp"
-        android:text="How many squares would you like in your puzzle?"
+        android:text="How many tiles would you like in your puzzle?"
         android:textSize="25dp"
         android:textColor="@android:color/black"/>
 
