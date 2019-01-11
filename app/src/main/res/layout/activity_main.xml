@@ -31,7 +31,7 @@
         android:layout_marginTop="16dp"
         android:background="@android:color/holo_green_dark"
         android:textColor="@android:color/white"
-        android:text="8"
+        android:text="3 x 3"
         android:textSize="25dp" />
 
     <Button
@@ -42,7 +42,18 @@
         android:layout_marginTop="16dp"
         android:background="@android:color/holo_green_dark"
         android:textColor="@android:color/white"
-        android:text="15"
+        android:text="4 x 4"
+        android:textSize="25dp" />
+
+    <Button
+        android:id="@+id/twentyfour_squares"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/holo_green_dark"
+        android:textColor="@android:color/white"
+        android:text="5 x 5"
         android:textSize="25dp" />
 
     <Button

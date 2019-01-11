@@ -52,15 +52,6 @@ public class GridAdapter extends BaseAdapter {
 
         ImageView imageView = (ImageView) gridView.findViewById(R.id.imageView);
 
-        /*
-        ViewGroup.LayoutParams lp = imageView.getLayoutParams();
-        //lp.height = bitmapArray[i].getHeight();
-        //lp.width = bitmapArray[i].getWidth();
-        lp.width = viewGroup.getWidth() / 3;
-        lp.height = viewGroup.getWidth() / 3;
-        imageView.requestLayout();
-        */
-
         //imageView.setLayoutParams(new ViewGroup.LayoutParams(80, 80));
 
         imageView.setImageBitmap(bitmapArray[i]);

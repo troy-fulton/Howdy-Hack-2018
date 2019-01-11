@@ -23,7 +23,7 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity {
 
     Button cameraButton;
-    Button fifteen_squares, eight_squares;
+    Button twentyfour_squares, fifteen_squares, eight_squares;
     Integer num_squares = 0;
 
     @Override
@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
         cameraButton = (Button) findViewById(R.id.cameraButton);
         fifteen_squares = (Button) findViewById(R.id.fifteen_squares);
+        twentyfour_squares = (Button) findViewById(R.id.twentyfour_squares);
         eight_squares = (Button) findViewById(R.id.eight_squares);
 
         cameraButton.setVisibility(View.GONE);
@@ -60,6 +61,13 @@ public class MainActivity extends AppCompatActivity {
                 change_selection(15);
             }
         });
+
+        twentyfour_squares.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                change_selection(24);
+            }
+        });
     }
 
     private void change_selection(int selection) {
@@ -68,15 +76,22 @@ public class MainActivity extends AppCompatActivity {
         if (selection == 8) {
             eight_squares.setTextColor(Color.BLUE);
             fifteen_squares.setTextColor(Color.WHITE);
+            twentyfour_squares.setTextColor(Color.WHITE);
         }
-        if (selection == 15) {
+        else if (selection == 15) {
             eight_squares.setTextColor(Color.WHITE);
             fifteen_squares.setTextColor(Color.BLUE);
+            twentyfour_squares.setTextColor(Color.WHITE);
+        }
+        else if (selection == 24) {
+            eight_squares.setTextColor(Color.WHITE);
+            fifteen_squares.setTextColor(Color.WHITE);
+            twentyfour_squares.setTextColor(Color.BLUE);
         }
     }
 
     private Boolean checkSelection() {
-        return num_squares == 8 || num_squares == 15;
+        return num_squares == 8 || num_squares == 15 || num_squares == 24;
     }
 
     private void dispatchTakePictureIntent() {

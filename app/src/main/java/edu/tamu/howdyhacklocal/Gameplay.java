@@ -32,7 +32,7 @@ public class Gameplay extends AppCompatActivity {
     Button backButton;
     String mCurrentPhotoPath;
     GridView grid;
-    private Integer num_squares;
+    private Integer num_squares, dimension;
     Bitmap[] bitmapsArray;
 
     @Override
@@ -56,6 +56,7 @@ public class Gameplay extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             num_squares = parseInt(bundle.getString("num_squares"));
+            dimension = (int) Math.sqrt(num_squares+1);
         }
 
         bitmapsArray = new Bitmap[num_squares + 1];
@@ -118,8 +119,6 @@ public class Gameplay extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Get the dimensions of the View
-        //int targetW = imageView.getWidth();
-        //int targetH = imageView.getHeight();
         int targetW = grid.getWidth();
         int targetH = grid.getHeight();
 
@@ -140,24 +139,29 @@ public class Gameplay extends AppCompatActivity {
         // This is from https://stackoverflow.com/questions/4754985/android-split-drawable
 
         Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        int height_inc = bitmap.getHeight() / 3;
-        int width_inc = bitmap.getWidth() / 3;
+        int height_inc = bitmap.getHeight() / dimension;
+        int width_inc = bitmap.getWidth() / dimension;
 
-        bitmapsArray[0] = Bitmap.createBitmap(bitmap, 0, 0, width_inc, height_inc);
-        bitmapsArray[1] = Bitmap.createBitmap(bitmap, width_inc, 0, width_inc, height_inc);
-        bitmapsArray[2] = Bitmap.createBitmap(bitmap, 2*width_inc, 0, width_inc, height_inc);
-        bitmapsArray[3] = Bitmap.createBitmap(bitmap, 0, height_inc, width_inc, height_inc);
-        bitmapsArray[4] = Bitmap.createBitmap(bitmap, width_inc, height_inc, width_inc, height_inc);
-        bitmapsArray[5] = Bitmap.createBitmap(bitmap, 2*width_inc, height_inc, width_inc, height_inc);
-        bitmapsArray[6] = Bitmap.createBitmap(bitmap, 0, 2*height_inc, width_inc, height_inc);
-        bitmapsArray[7] = Bitmap.createBitmap(bitmap, width_inc, 2*height_inc, width_inc, height_inc);
-        bitmapsArray[8] = Bitmap.createBitmap(bitmap, 2*width_inc, 2*height_inc, width_inc, height_inc);
+        int blankIndex = 4;
 
+
+        int bmpCount = 0;
+
+        for (int i = 0; i < dimension; i++) {
+            for (int j = 0; j < dimension; j++) {
+                if (bmpCount == blankIndex)
+                    bitmapsArray[bmpCount] = Bitmap.createBitmap(width_inc, height_inc, Bitmap.Config.ARGB_8888);
+                else
+                    bitmapsArray[bmpCount] = Bitmap.createBitmap(bitmap,
+                        j*width_inc, i*height_inc, width_inc, height_inc);
+                bmpCount++;
+            }
+        }
 
         grid.setAdapter(new
                 GridAdapter(this, bitmapsArray)
         );
-        grid.setNumColumns(3);
+        grid.setNumColumns(dimension);
 
 
         //imageView.setImageBitmap(bitmapsArray[4]);
